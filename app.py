@@ -47,7 +47,9 @@ def index():
         user_id = str(uuid.uuid4())
 
     if request.method == "POST":
-        content = request.form['content']
+        content = request.form['content'].strip()
+        if not content:
+            return "Task content cannot be empty.", 400
         new_task = MyTask(content=content, user_id=user_id)
         try:
             db.session.add(new_task)
@@ -85,7 +87,9 @@ def edit(id):
     if task.user_id != user_id:
         return "Unauthorized", 403
     if request.method == "POST":
-        task.content = request.form['content']
+        task.content = request.form['content'].strip()
+        if not task.content:
+            return "Task content cannot be empty.", 400
         try:
             db.session.commit()
             return redirect('/')
